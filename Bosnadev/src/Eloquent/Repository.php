@@ -1,17 +1,28 @@
 <?php
 namespace Bosnadev\Repositories\Eloquent;
 
+use Bosnadev\Repositories\Contracts\CriteriaInterface;
+use Bosnadev\Repositories\Criteria\Criteria;
 use Bosnadev\Repositories\Contracts\RepositoryInterface;
 use Bosnadev\Repositories\Exceptions\RepositoryException;
+
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Container\Container as App;
-abstract class Repository implements RepositoryInterface{
+abstract class Repository implements RepositoryInterface,CriteriaInterface{
 	private $app;
 
 	protected $model;
 
-	public function __construct(App $app){
+	protected $criteria;
+
+	protected $skipCriteria = false;
+
+	public function __construct(App $app,Collection $collection){
 		$this->app = $app;
+		$this->criteria = $collection;
+		$this->resetScope();
 		$this->makeModel();
 	}
 
@@ -53,4 +64,27 @@ abstract class Repository implements RepositoryInterface{
 
 			return $this->model = $model->newQuery();
 	}
+
+	public function resetScope(){
+		$this->skipCriteria(false);
+		return $this;
+	}
+
+	public function skipCriteria($status = true){
+		$this->skipCriteria = $status;
+		return $this;
+	}
+
+	public function getCriteria(){
+		return $this->criteria;
+	}
+	public function getByCriteria(Criteria $criteria){
+		$this->model = $criteria->apply($this->model,);
+	}
+
+	public function pushCriteria(Criteria $criteria);
+
+	public function applyCriteria(Criteria $criteria);
+
+
 }
