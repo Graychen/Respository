@@ -87,7 +87,17 @@ abstract class Repository implements RepositoryInterface,CriteriaInterface{
         return $this;
     }
 
-	public function applyCriteria(Criteria $criteria);
+    public function applyCriteria(Criteria $criteria){
+        if($this->skipCriteria ===true)
+            return $this;
+
+        foreach($this->getCriteria() as $criteria){
+            if($criteria instanceof Criteria) 
+                $this->model = $criteria->apply($this->model,$this);
+        }
+        return $this;
+
+    }
 
 
 }
