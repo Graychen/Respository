@@ -82,7 +82,10 @@ abstract class Repository implements RepositoryInterface,CriteriaInterface{
 		$this->model = $criteria->apply($this->model,);
 	}
 
-	public function pushCriteria(Criteria $criteria);
+    public function pushCriteria(Criteria $criteria){
+        $this->criteria->push($criteria);
+        return $this;
+    }
 
 	public function applyCriteria(Criteria $criteria);
 
